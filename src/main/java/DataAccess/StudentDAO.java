@@ -26,6 +26,10 @@ public class StudentDAO {
     private String
             addOneStudent = "insert into student values(?,?,?,?,?)";
 
+    private String
+            findAllStudent = "select * from student";
+
+
     public static StudentDAO getStudentDAO() {
         if (studentDAO == null) {
             studentDAO = new StudentDAO();
@@ -33,7 +37,24 @@ public class StudentDAO {
         return studentDAO;
     }
 
-    void addStudent(Student student) {
+    public List<Student> getList() {
+        Object[] params = {};
+        var rs = db.executeQuery(findAllStudent, params);
+        list.clear();
+
+        try {
+
+            while (rs.next()) {
+                list.add(new Student(rs.getString(1), rs.getString(2),
+                        rs.getString(3), rs.getDate(4), rs.getString(5)));
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return list;
+    }
+
+    public void addStudent(Student student) {
         if (findOne(student.getId()) == null) {
             list.add(student);
             addStudentDB(student);
